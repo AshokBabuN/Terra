@@ -21,3 +21,35 @@ resource "aws_subnet" "main" {
   tags              = "${var.Public_sub_tags}"
 
 }
+
+#create internet gateway
+
+resource "aws_internet_gateway" "gw" {
+  vpc_id = "${aws_vpc.myapp_vpc.id}"
+
+  tags = {
+    Name = "Public_ing"
+  }
+}
+
+#create custom route table for internet gateway
+resource "aws_route_table" "r" {
+  vpc_id = "${aws_vpc.myapp_vpc.id}"
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = "${aws_internet_gateway.gw.id}"
+  }
+
+  tags = {
+    Name = "main"
+  }
+}
+
+#associat public subnet with public route table
+
+resource "aws_route_table_association" "a" {
+  count          = "${length(local.azs)}"
+  subnet_id      = "${element(aws_subnet.main.*.id, count.index)}"
+  route_table_id = "${aws_route_table.r.id}"
+}
