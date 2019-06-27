@@ -1,8 +1,12 @@
 
+#for local variables
 
 locals {
   azs = "${data.aws_availability_zones.azs.names}"
 }
+
+#create a vpc
+
 resource "aws_vpc" "myapp_vpc" {
   cidr_block       = "${var.vpc_cidr}"
   instance_tenancy = "${var.vpc_tenancy}"
