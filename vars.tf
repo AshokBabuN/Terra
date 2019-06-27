@@ -25,12 +25,21 @@ variable "vpc_tags" {
 
   }
 }
-#varibles for subnets tags
+#varibles for public subnets tags
 
 variable "Public_sub_tags" {
   type = "map"
   default = {
     Name = "Public_subnet"
+  }
+}
+
+#variable for private subnet
+
+variable "private_sub_tags" {
+  type = "map"
+  default = {
+    Name = "private_subnet"
   }
 }
 
@@ -40,4 +49,11 @@ variable "subnet_cidrs" {
   description = "choose  cidr for public subnet"
   type        = "list"
   default     = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+}
+
+#variable  for private subnet
+variable "private_subnet_cidrs" {
+  description = "choose  cidr for public subnet"
+  type        = "list"
+  default     = ["10.0.6.0/24", "10.0.7.0/24"]
 }
