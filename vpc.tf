@@ -16,23 +16,13 @@ resource "aws_vpc" "myapp_vpc" {
 resource "aws_subnet" "main" {
   count                   = "${length(local.azs)}"
   vpc_id                  = "${aws_vpc.myapp_vpc.id}"
-  cidr_block              = "${element(var.subnet_cidrs, count.index)}"
+  cidr_block              = "${element(var.public_subnet_cidrs, count.index)}"
   availability_zone       = "${element(local.azs, count.index)}"
   map_public_ip_on_launch = true
   tags                    = "${var.Public_sub_tags}"
 
 }
 
-#create private1 subnet
-
-resource "aws_subnet" "private" {
-  count             = "2"
-  vpc_id            = "${aws_vpc.myapp_vpc.id}"
-  cidr_block        = "${element(var.private_subnet_cidrs, count.index)}"
-  availability_zone = "${element(local.azs, count.index)}"
-  tags              = "${var.private_sub_tags}"
-
-}
 
 #create internet gateway
 
@@ -66,7 +56,19 @@ resource "aws_route_table_association" "a" {
   route_table_id = "${aws_route_table.r.id}"
 }
 
-#create custom public route table for internet gateway
+
+
+#create private1 subnet
+resource "aws_subnet" "private" {
+  count             = "2"
+  vpc_id            = "${aws_vpc.myapp_vpc.id}"
+  cidr_block        = "${element(var.private_subnet_cidrs, count.index)}"
+  availability_zone = "${element(local.azs, count.index)}"
+  tags              = "${var.private_sub_tags}"
+
+}
+
+#create custom private route table for internet gateway
 resource "aws_route_table" "prt" {
   vpc_id = "${aws_vpc.myapp_vpc.id}"
 
@@ -76,7 +78,6 @@ resource "aws_route_table" "prt" {
 }
 
 #associate private subnet with private route table
-
 resource "aws_route_table_association" "pa" {
   count          = "2"
   subnet_id      = "${element(aws_subnet.private.*.id, count.index)}"

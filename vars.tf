@@ -43,9 +43,9 @@ variable "private_sub_tags" {
   }
 }
 
-#variable for subnet_cidrs
+#variable for public subnet_cidrs
 
-variable "subnet_cidrs" {
+variable "public_subnet_cidrs" {
   description = "choose  cidr for public subnet"
   type        = "list"
   default     = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
@@ -53,7 +53,7 @@ variable "subnet_cidrs" {
 
 #variable  for private subnet
 variable "private_subnet_cidrs" {
-  description = "choose  cidr for public subnet"
+  description = "choose  cidr for private subnet"
   type        = "list"
   default     = ["10.0.6.0/24", "10.0.7.0/24"]
 }
