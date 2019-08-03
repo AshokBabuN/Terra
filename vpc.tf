@@ -2,7 +2,9 @@
 #for local variables
 
 locals {
-  azs = "${data.aws_availability_zones.azs.names}"
+  azs                = "${data.aws_availability_zones.azs.names}"
+  public_subnet_ids  = "${aws_subnet.main.*.id}"
+  private_subnet_ids = "${aws_subnet.private.*.id}"
 }
 
 #create a vpc
@@ -52,7 +54,7 @@ resource "aws_route_table" "r" {
 
 resource "aws_route_table_association" "a" {
   count          = "${length(local.azs)}"
-  subnet_id      = "${element(aws_subnet.main.*.id, count.index)}"
+  subnet_id      = "${element(local.public_subnet_ids, count.index)}"
   route_table_id = "${aws_route_table.r.id}"
 }
 
@@ -71,7 +73,10 @@ resource "aws_subnet" "private" {
 #create custom private route table for internet gateway
 resource "aws_route_table" "prt" {
   vpc_id = "${aws_vpc.myapp_vpc.id}"
-
+  route {
+    cidr_block  = "0.0.0.0/0"
+    instance_id = "${aws_instance.nat.id}"
+  }
   tags = {
     Name = "private_rt"
   }
@@ -80,6 +85,6 @@ resource "aws_route_table" "prt" {
 #associate private subnet with private route table
 resource "aws_route_table_association" "pa" {
   count          = "2"
-  subnet_id      = "${element(aws_subnet.private.*.id, count.index)}"
+  subnet_id      = "${element(local.private_subnet_ids, count.index)}"
   route_table_id = "${aws_route_table.prt.id}"
 }
