@@ -57,3 +57,23 @@ variable "private_subnet_cidrs" {
   type        = "list"
   default     = ["10.0.6.0/24", "10.0.7.0/24"]
 }
+
+variable "region" {
+  default = "ap-south-1"
+}
+
+#variable for nat_instance amis
+variable "nat_amis" {
+  type = "map"
+  default = {
+    ap-south-1 = "ami-0d2692b6acea72ee6"
+  }
+}
+
+#variables for Ec2_instances amis
+variable "web_ami" {
+  type = "map"
+  default = {
+    ap-south-1 = "ami-0d2692b6acea72ee6"
+  }
+}
